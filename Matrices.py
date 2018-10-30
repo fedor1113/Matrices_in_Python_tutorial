@@ -1,3 +1,6 @@
+#!/usr/bin/env python3
+
+
 class Matrix:
     """A simple wrapper around a two-dimensional list"""
 
@@ -38,7 +41,7 @@ class Matrix:
 
     def update_order(self):
         self.order = (len(self._lst), len(self._lst[0]))
-        # количество строк, количество столбцов
+        # quantity of rows, quantity of columns
 
     def __matmul__(self, multiplier):
         if self.order[1] != multiplier.order[0]:
@@ -62,7 +65,32 @@ class Matrix:
         return Matrix(self._lst)
 
     def transpose(self):
-        self._lst = list(zip(*self._lst))
+        if self.order[0] == self.order[1]:
+            self._transpose_fast()
+        else:
+            self._lst = list(zip(*self._lst))
+
+    def _transpose_fast(self):
+        try:
+            assert self.order[0] == self.order[1]
+        except AssertionError:
+            msg = "Fast transpose for non-square matrices is not implemented"
+            raise NotImplementedError(msg)
+
+        for j in range(self.order[0]):
+            for k in range(self.order[1]):
+                self._lst[j][k] = self._lst[k][j]
+
+    def main_diagonal(self):
+        cnt = min(self.order)
+        return (self[k][k] for k in range(cnt))
+
+    def antidiagonal(self):
+        cnt = min(self.order)
+        return (self[cnt-k-1][k] for k in range(cnt))
+
+    def trace(self):
+        return sum(self.main_diagonal())
 
     def arithmetic_mean(self):
         s, cnt = 0, 0
